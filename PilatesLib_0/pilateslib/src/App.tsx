@@ -3,6 +3,9 @@ import { Header } from './components/Header'
 import { Biblioteca } from './pages/Biblioteca'
 import { Login } from './pages/Login'
 import { Admin } from './pages/Admin'
+import { AdminNovo } from './pages/AdminNovo'
+import { AdminEditar } from './pages/AdminEditar'
+import { ExercicioDetalhe } from './pages/ExercicioDetalhe'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 
 function App() {
@@ -11,12 +14,29 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Biblioteca />} />
+        <Route path="/exercicio/:slug" element={<ExercicioDetalhe />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/admin"
           element={
             <ProtectedRoute>
               <Admin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/novo"
+          element={
+            <ProtectedRoute>
+              <AdminNovo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/editar"
+          element={
+            <ProtectedRoute>
+              <AdminEditar />
             </ProtectedRoute>
           }
         />

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
+import { gerarSlug } from '../lib/slug'
 
-// Dados que o formulário vai enviar para criar um exercício.
 export type NewExerciseInput = {
   nome: string
   descricao_curta: string
@@ -11,17 +11,6 @@ export type NewExerciseInput = {
   execucao: string
   video_url: string
   status: 'rascunho' | 'publicado'
-}
-
-// Transforma "Bridge com Abdução" em "bridge-com-abducao",
-// formato usado na URL de cada exercício (slug)
-function gerarSlug(nome: string): string {
-  return nome
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // remove acentos
-    .replace(/[^a-z0-9]+/g, '-') // troca espaços/símbolos por hífen
-    .replace(/(^-|-$)/g, '') // remove hífen sobrando no início/fim
 }
 
 async function createExercise(input: NewExerciseInput) {
@@ -38,8 +27,6 @@ async function createExercise(input: NewExerciseInput) {
   return data
 }
 
-// useMutation é o "irmão" do useQuery, mas para operações de
-// escrita (criar/editar/excluir) em vez de leitura.
 export function useCreateExercise() {
   const queryClient = useQueryClient()
 
@@ -47,6 +34,7 @@ export function useCreateExercise() {
     mutationFn: createExercise,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['exercises'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-exercises'] })
     },
   })
 }

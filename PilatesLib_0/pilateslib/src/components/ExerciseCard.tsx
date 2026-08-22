@@ -1,29 +1,30 @@
+import { Link } from 'react-router-dom'
 import type { Exercise } from '../hooks/useExercises'
 
-// Mapeia o valor salvo no banco para um texto mais bonito na tela
 const nivelLabel: Record<Exercise['nivel'], string> = {
   iniciante: 'Iniciante',
   intermediario: 'Intermediário',
   avancado: 'Avançado',
 }
 
-// Mapeia o nível para uma cor de destaque (badge)
 const nivelCor: Record<Exercise['nivel'], string> = {
   iniciante: 'bg-green-100 text-green-800',
   intermediario: 'bg-yellow-100 text-yellow-800',
   avancado: 'bg-red-100 text-red-800',
 }
 
-// "props" são os dados que esse componente recebe de fora.
-// Aqui, ele recebe um único exercício para desenhar.
 type Props = {
   exercise: Exercise
 }
 
 export function ExerciseCard({ exercise }: Props) {
   return (
-    <div className="rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow bg-white">
-      {/* Se houver imagem, mostra; senão, mostra um bloco cinza no lugar */}
+    // Link envolvendo o card inteiro: o card todo vira clicável,
+    // levando até /exercicio/<slug-do-exercicio>
+    <Link
+      to={`/exercicio/${exercise.slug}`}
+      className="block rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow bg-white"
+    >
       {exercise.imagem_url ? (
         <img
           src={exercise.imagem_url}
@@ -51,6 +52,6 @@ export function ExerciseCard({ exercise }: Props) {
           {nivelLabel[exercise.nivel]}
         </span>
       </div>
-    </div>
+    </Link>
   )
 }

@@ -1,205 +1,110 @@
-import { useState, type FormEvent } from 'react'
-import { useEquipment, useObjectives } from '../hooks/useTaxonomy'
-import { useCreateExercise } from '../hooks/useCreateExercise'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useAdminExercises } from '../hooks/useAdminExercises'
+import { useDeleteExercise } from '../hooks/useDeleteExercise'
+
+const nivelLabel = {
+  iniciante: 'Iniciante',
+  intermediario: 'Intermediário',
+  avancado: 'Avançado',
+}
 
 export function Admin() {
-  const { data: equipmentList } = useEquipment()
-  const { data: objectivesList } = useObjectives()
-  const createExercise = useCreateExercise()
+  const { data: exercises, isLoading, error } = useAdminExercises()
+  const deleteExercise = useDeleteExercise()
 
-  const [form, setForm] = useState({
-    nome: '',
-    descricao_curta: '',
-    nivel: 'iniciante' as 'iniciante' | 'intermediario' | 'avancado',
-    equipamento_id: '',
-    objetivo_principal_id: '',
-    execucao: '',
-    video_url: '',
-  })
+  // Guarda qual exercício está com o "tem certeza?" aberto no momento
+  const [confirmandoId, setConfirmandoId] = useState<string | null>(null)
 
-  const [feedback, setFeedback] = useState<string | null>(null)
-
-  function updateField(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }))
-  }
-
-  async function handleSubmit(e: FormEvent, status: 'rascunho' | 'publicado') {
-    e.preventDefault()
-    setFeedback(null)
-
-    // Validação manual: como os botões não são "type=submit",
-    // o navegador não bloqueia sozinho campos vazios. Fazemos isso aqui.
-    if (!form.nome.trim()) {
-      setFeedback('Preencha o nome do exercício.')
-      return
-    }
-    if (!form.equipamento_id) {
-      setFeedback('Selecione um equipamento.')
-      return
-    }
-    if (!form.objetivo_principal_id) {
-      setFeedback('Selecione um objetivo principal.')
-      return
-    }
-
-    try {
-      await createExercise.mutateAsync({ ...form, status })
-      setFeedback(
-        status === 'publicado'
-          ? 'Exercício publicado com sucesso!'
-          : 'Exercício salvo como rascunho.'
-      )
-      setForm({
-        nome: '',
-        descricao_curta: '',
-        nivel: 'iniciante',
-        equipamento_id: '',
-        objetivo_principal_id: '',
-        execucao: '',
-        video_url: '',
-      })
-    } catch (err) {
-      setFeedback('Erro ao salvar: ' + (err as Error).message)
-    }
+  async function handleDelete(id: string) {
+    await deleteExercise.mutateAsync(id)
+    setConfirmandoId(null)
   }
 
   return (
-    <div className="p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Cadastrar novo exercício
-      </h1>
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Área administrativa</h1>
+        <Link
+          to="/admin/novo"
+          className="bg-teal-700 text-white rounded px-4 py-2 text-sm font-medium"
+        >
+          + Novo exercício
+        </Link>
+      </div>
 
-      {feedback && (
-        <p className="mb-4 text-sm px-3 py-2 rounded bg-teal-50 text-teal-800">
-          {feedback}
-        </p>
+      {isLoading && <p className="text-gray-500">Carregando...</p>}
+      {error && <p className="text-red-600">Erro: {error.message}</p>}
+
+      {exercises && exercises.length === 0 && (
+        <p className="text-gray-500">Nenhum exercício cadastrado ainda.</p>
       )}
 
-      <form className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Nome do exercício
-          </label>
-          <input
-            type="text"
-            value={form.nome}
-            onChange={(e) => updateField('nome', e.target.value)}
-            required
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          />
-        </div>
+      {exercises && exercises.length > 0 && (
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="text-left border-b border-gray-200 text-gray-500">
+              <th className="py-2">Nome</th>
+              <th className="py-2">Nível</th>
+              <th className="py-2">Status</th>
+              <th className="py-2 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {exercises.map((exercise) => (
+              <tr key={exercise.id} className="border-b border-gray-100">
+                <td className="py-2 font-medium text-gray-900">{exercise.nome}</td>
+                <td className="py-2 text-gray-600">{nivelLabel[exercise.nivel]}</td>
+                <td className="py-2">
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${
+                      exercise.status === 'publicado'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {exercise.status === 'publicado' ? 'Publicado' : 'Rascunho'}
+                  </span>
+                </td>
+                <td className="py-2 text-right space-x-3">
+                  <Link
+                    to={`/admin/${exercise.id}/editar`}
+                    className="text-teal-700 hover:underline"
+                  >
+                    Editar
+                  </Link>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Descrição curta
-          </label>
-          <textarea
-            value={form.descricao_curta}
-            onChange={(e) => updateField('descricao_curta', e.target.value)}
-            rows={2}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nível
-            </label>
-            <select
-              value={form.nivel}
-              onChange={(e) => updateField('nivel', e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="iniciante">Iniciante</option>
-              <option value="intermediario">Intermediário</option>
-              <option value="avancado">Avançado</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Equipamento
-            </label>
-            <select
-              value={form.equipamento_id}
-              onChange={(e) => updateField('equipamento_id', e.target.value)}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="">Selecione...</option>
-              {equipmentList?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Objetivo principal
-            </label>
-            <select
-              value={form.objetivo_principal_id}
-              onChange={(e) => updateField('objetivo_principal_id', e.target.value)}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="">Selecione...</option>
-              {objectivesList?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Execução (passo a passo)
-          </label>
-          <textarea
-            value={form.execucao}
-            onChange={(e) => updateField('execucao', e.target.value)}
-            rows={4}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Link do vídeo (YouTube, etc.)
-          </label>
-          <input
-            type="url"
-            value={form.video_url}
-            onChange={(e) => updateField('video_url', e.target.value)}
-            placeholder="https://..."
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div className="flex gap-3 pt-2">
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, 'rascunho')}
-            disabled={createExercise.isPending}
-            className="border border-gray-300 text-gray-700 rounded px-4 py-2 text-sm font-medium disabled:opacity-50"
-          >
-            Salvar rascunho
-          </button>
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, 'publicado')}
-            disabled={createExercise.isPending}
-            className="bg-teal-700 text-white rounded px-4 py-2 text-sm font-medium disabled:opacity-50"
-          >
-            Publicar
-          </button>
-        </div>
-      </form>
+                  {confirmandoId === exercise.id ? (
+                    <>
+                      <span className="text-gray-500">Excluir mesmo?</span>
+                      <button
+                        onClick={() => handleDelete(exercise.id)}
+                        disabled={deleteExercise.isPending}
+                        className="text-red-600 font-medium hover:underline"
+                      >
+                        Sim
+                      </button>
+                      <button
+                        onClick={() => setConfirmandoId(null)}
+                        className="text-gray-500 hover:underline"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmandoId(exercise.id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      Excluir
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

@@ -21,6 +21,7 @@ async function fetchExercises(): Promise<Exercise[]> {
     .order('nome')
 
   if (error) {
+    // Se der erro na consulta, "jogamos" o erro para o React Query tratar
     throw new Error(error.message)
   }
 
