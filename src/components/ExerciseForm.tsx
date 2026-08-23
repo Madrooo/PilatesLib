@@ -12,6 +12,14 @@ export type ExerciseFormValues = {
   execucao: string
   video_url: string
   imagem_url: string
+  // Os cinco campos abaixo guardam o texto "cru" digitado no formulário
+  // (um item por linha) — a conversão para lista acontece só na hora
+  // de salvar no banco (ver useCreateExercise / useUpdateExercise)
+  cues: string
+  erros_comuns: string
+  indicacoes: string
+  precaucoes: string
+  contraindicacoes: string
 }
 
 const CAMPOS_VAZIOS: ExerciseFormValues = {
@@ -24,6 +32,11 @@ const CAMPOS_VAZIOS: ExerciseFormValues = {
   execucao: '',
   video_url: '',
   imagem_url: '',
+  cues: '',
+  erros_comuns: '',
+  indicacoes: '',
+  precaucoes: '',
+  contraindicacoes: '',
 }
 
 type Props = {
@@ -64,7 +77,6 @@ export function ExerciseForm({
       setFeedback('Erro ao enviar imagem: ' + (err as Error).message)
     } finally {
       setIsUploadingImage(false)
-      // Limpa o input para permitir escolher o mesmo arquivo de novo, se precisar
       e.target.value = ''
     }
   }
@@ -233,6 +245,81 @@ export function ExerciseForm({
         {isUploadingImage && (
           <p className="text-sm text-gray-500 mt-1">Enviando imagem...</p>
         )}
+      </div>
+
+      {/* ----- Campos clínicos adicionais ----- */}
+      <div className="pt-4 border-t border-gray-200">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Informações clínicas
+        </h2>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Cues / comandos verbais{' '}
+              <span className="text-gray-400 font-normal">(um por linha)</span>
+            </label>
+            <textarea
+              value={form.cues}
+              onChange={(e) => updateField('cues', e.target.value)}
+              rows={3}
+              placeholder={'Ex: "Alongue a coluna"\n"Ative o core antes de mover"'}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Erros comuns{' '}
+              <span className="text-gray-400 font-normal">(um por linha)</span>
+            </label>
+            <textarea
+              value={form.erros_comuns}
+              onChange={(e) => updateField('erros_comuns', e.target.value)}
+              rows={3}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Indicações{' '}
+              <span className="text-gray-400 font-normal">(um por linha)</span>
+            </label>
+            <textarea
+              value={form.indicacoes}
+              onChange={(e) => updateField('indicacoes', e.target.value)}
+              rows={2}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Precauções{' '}
+              <span className="text-gray-400 font-normal">(um por linha)</span>
+            </label>
+            <textarea
+              value={form.precaucoes}
+              onChange={(e) => updateField('precaucoes', e.target.value)}
+              rows={2}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contraindicações{' '}
+              <span className="text-gray-400 font-normal">(um por linha)</span>
+            </label>
+            <textarea
+              value={form.contraindicacoes}
+              onChange={(e) => updateField('contraindicacoes', e.target.value)}
+              rows={2}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-3 pt-2">

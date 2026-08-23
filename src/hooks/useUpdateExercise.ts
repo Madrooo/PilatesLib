@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
 import { gerarSlug } from '../lib/slug'
+import { linhasParaArray } from '../lib/textArray'
 import type { ExerciseFormData } from './useAdminExerciseById'
 
 async function updateExercise(input: ExerciseFormData) {
@@ -15,6 +16,11 @@ async function updateExercise(input: ExerciseFormData) {
     regiao_corporal_id: campos.regiao_corporal_id || null,
     slug: gerarSlug(campos.nome),
     atualizado_em: new Date().toISOString(),
+    cues: linhasParaArray(campos.cues),
+    erros_comuns: linhasParaArray(campos.erros_comuns),
+    indicacoes: linhasParaArray(campos.indicacoes),
+    precaucoes: linhasParaArray(campos.precaucoes),
+    contraindicacoes: linhasParaArray(campos.contraindicacoes),
   }
 
   const { data, error } = await supabase
