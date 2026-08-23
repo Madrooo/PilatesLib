@@ -1,14 +1,13 @@
 import { useState, type FormEvent } from 'react'
-import { useEquipment, useObjectives } from '../hooks/useTaxonomy'
+import { useEquipment, useObjectives, useBodyRegions } from '../hooks/useTaxonomy'
 
-// Formato dos dados que o formulário manipula (sem o "status",
-// que quem usa o formulário decide através dos botões)
 export type ExerciseFormValues = {
   nome: string
   descricao_curta: string
   nivel: 'iniciante' | 'intermediario' | 'avancado'
   equipamento_id: string
   objetivo_principal_id: string
+  regiao_corporal_id: string
   execucao: string
   video_url: string
 }
@@ -19,18 +18,15 @@ const CAMPOS_VAZIOS: ExerciseFormValues = {
   nivel: 'iniciante',
   equipamento_id: '',
   objetivo_principal_id: '',
+  regiao_corporal_id: '',
   execucao: '',
   video_url: '',
 }
 
 type Props = {
-  // Valores iniciais (preenchidos ao editar; vazio ao criar)
   initialValues?: ExerciseFormValues
-  // Função chamada quando a pessoa clica em salvar, recebendo os
-  // dados do formulário e o status escolhido
   onSubmit: (values: ExerciseFormValues, status: 'rascunho' | 'publicado') => void | Promise<void>
   isSaving: boolean
-  // Texto do botão principal (ex: "Publicar" ou "Salvar alterações")
   submitLabel?: string
 }
 
@@ -42,6 +38,7 @@ export function ExerciseForm({
 }: Props) {
   const { data: equipmentList } = useEquipment()
   const { data: objectivesList } = useObjectives()
+  const { data: bodyRegionsList } = useBodyRegions()
 
   const [form, setForm] = useState<ExerciseFormValues>(initialValues ?? CAMPOS_VAZIOS)
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -98,7 +95,7 @@ export function ExerciseForm({
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Nível</label>
           <select
@@ -141,6 +138,24 @@ export function ExerciseForm({
           >
             <option value="">Selecione...</option>
             {objectivesList?.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Região corporal
+          </label>
+          <select
+            value={form.regiao_corporal_id}
+            onChange={(e) => updateField('regiao_corporal_id', e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+          >
+            <option value="">Selecione...</option>
+            {bodyRegionsList?.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.nome}
               </option>

@@ -11,7 +11,6 @@ export type Exercise = {
   status: 'rascunho' | 'publicado'
 }
 
-// Todos os filtros são opcionais — se não vier nada, busca tudo publicado
 export type ExerciseFilters = {
   search?: string
   nivel?: string
@@ -21,15 +20,16 @@ export type ExerciseFilters = {
 }
 
 async function fetchExercises(filters: ExerciseFilters): Promise<Exercise[]> {
-  // Começamos a consulta e vamos "empilhando" condições conforme
-  // os filtros forem preenchidos — só aplica o que realmente foi passado
   let query = supabase
     .from('exercises')
     .select('id, nome, slug, descricao_curta, nivel, imagem_url, status')
+    // Filtro explícito, independente de quem está logado: a Biblioteca
+    // pública NUNCA deve mostrar publicado=false ou excluído, mesmo que
+    // a política de RLS do admin libere o acesso a esses dados no banco.
+    .eq('status', 'publicado')
+    .is('excluido_em', null)
 
   if (filters.search && filters.search.trim() !== '') {
-    // ilike = busca "parecida", sem diferenciar maiúscula/minúscula.
-    // O % antes e depois significa "contém esse texto em qualquer parte"
     query = query.ilike('nome', `%${filters.search.trim()}%`)
   }
 
@@ -57,8 +57,6 @@ async function fetchExercises(filters: ExerciseFilters): Promise<Exercise[]> {
 
 export function useExercises(filters: ExerciseFilters = {}) {
   return useQuery({
-    // Incluir os filtros na queryKey é essencial: é isso que diz ao
-    // React Query "busque de novo quando qualquer filtro mudar"
     queryKey: ['exercises', filters],
     queryFn: () => fetchExercises(filters),
   })

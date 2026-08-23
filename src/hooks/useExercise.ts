@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabaseClient'
 
-// Formato completo de um exercício, incluindo os nomes das categorias
-// relacionadas (não só os IDs, que é o que a tabela "exercises" guarda)
 export type ExerciseDetail = {
   id: string
   nome: string
@@ -39,6 +37,9 @@ async function fetchExerciseBySlug(slug: string): Promise<ExerciseDetail | null>
     )
     .eq('slug', slug)
     .eq('status', 'publicado')
+    // Mesmo filtro explícito aqui: garante que ninguém acesse um
+    // exercício excluído digitando a URL direto, mesmo estando logado como admin
+    .is('excluido_em', null)
     .single()
 
   if (error) {

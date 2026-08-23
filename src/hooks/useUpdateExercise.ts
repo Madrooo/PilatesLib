@@ -8,13 +8,18 @@ async function updateExercise(input: ExerciseFormData) {
 
   const { id, ...campos } = input
 
+  const payload = {
+    ...campos,
+    equipamento_id: campos.equipamento_id || null,
+    objetivo_principal_id: campos.objetivo_principal_id || null,
+    regiao_corporal_id: campos.regiao_corporal_id || null,
+    slug: gerarSlug(campos.nome),
+    atualizado_em: new Date().toISOString(),
+  }
+
   const { data, error } = await supabase
     .from('exercises')
-    .update({
-      ...campos,
-      slug: gerarSlug(campos.nome),
-      atualizado_em: new Date().toISOString(),
-    })
+    .update(payload)
     .eq('id', id)
     .select()
     .single()
@@ -29,8 +34,6 @@ export function useUpdateExercise() {
   return useMutation({
     mutationFn: updateExercise,
     onSuccess: (data) => {
-      // Invalida tanto a lista pública quanto a lista/detalhe do admin,
-      // para tudo se atualizar sozinho depois de editar
       queryClient.invalidateQueries({ queryKey: ['exercises'] })
       queryClient.invalidateQueries({ queryKey: ['admin-exercises'] })
       queryClient.invalidateQueries({ queryKey: ['admin-exercise', data.id] })
