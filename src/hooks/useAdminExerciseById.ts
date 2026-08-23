@@ -11,6 +11,7 @@ export type ExerciseFormData = {
   regiao_corporal_id: string
   execucao: string
   video_url: string
+  imagem_url: string
   status: 'rascunho' | 'publicado'
 }
 
@@ -18,7 +19,7 @@ async function fetchExerciseById(id: string): Promise<ExerciseFormData | null> {
   const { data, error } = await supabase
     .from('exercises')
     .select(
-      'id, nome, descricao_curta, nivel, equipamento_id, objetivo_principal_id, regiao_corporal_id, execucao, video_url, status'
+      'id, nome, descricao_curta, nivel, equipamento_id, objetivo_principal_id, regiao_corporal_id, execucao, video_url, imagem_url, status'
     )
     .eq('id', id)
     .single()

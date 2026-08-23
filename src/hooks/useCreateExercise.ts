@@ -11,6 +11,7 @@ export type NewExerciseInput = {
   regiao_corporal_id: string
   execucao: string
   video_url: string
+  imagem_url: string
   status: 'rascunho' | 'publicado'
 }
 

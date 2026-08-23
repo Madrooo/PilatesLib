@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useEquipment, useObjectives, useBodyRegions } from '../hooks/useTaxonomy'
+import { uploadExerciseImage } from '../lib/uploadExerciseImage'
 
 export type ExerciseFormValues = {
   nome: string
@@ -10,6 +11,7 @@ export type ExerciseFormValues = {
   regiao_corporal_id: string
   execucao: string
   video_url: string
+  imagem_url: string
 }
 
 const CAMPOS_VAZIOS: ExerciseFormValues = {
@@ -21,6 +23,7 @@ const CAMPOS_VAZIOS: ExerciseFormValues = {
   regiao_corporal_id: '',
   execucao: '',
   video_url: '',
+  imagem_url: '',
 }
 
 type Props = {
@@ -42,9 +45,28 @@ export function ExerciseForm({
 
   const [form, setForm] = useState<ExerciseFormValues>(initialValues ?? CAMPOS_VAZIOS)
   const [feedback, setFeedback] = useState<string | null>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
 
   function updateField<K extends keyof ExerciseFormValues>(field: K, value: ExerciseFormValues[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingImage(true)
+    setFeedback(null)
+    try {
+      const url = await uploadExerciseImage(file)
+      updateField('imagem_url', url)
+    } catch (err) {
+      setFeedback('Erro ao enviar imagem: ' + (err as Error).message)
+    } finally {
+      setIsUploadingImage(false)
+      // Limpa o input para permitir escolher o mesmo arquivo de novo, se precisar
+      e.target.value = ''
+    }
   }
 
   function validar(): string | null {
@@ -189,11 +211,35 @@ export function ExerciseForm({
         />
       </div>
 
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Imagem</label>
+
+        {form.imagem_url && (
+          <img
+            src={form.imagem_url}
+            alt="Prévia"
+            className="w-40 h-28 object-cover rounded border border-gray-200 mb-2"
+          />
+        )}
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          disabled={isUploadingImage}
+          className="text-sm"
+        />
+
+        {isUploadingImage && (
+          <p className="text-sm text-gray-500 mt-1">Enviando imagem...</p>
+        )}
+      </div>
+
       <div className="flex gap-3 pt-2">
         <button
           type="button"
           onClick={(e) => handleClick(e, 'rascunho')}
-          disabled={isSaving}
+          disabled={isSaving || isUploadingImage}
           className="border border-gray-300 text-gray-700 rounded px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
           Salvar rascunho
@@ -201,7 +247,7 @@ export function ExerciseForm({
         <button
           type="button"
           onClick={(e) => handleClick(e, 'publicado')}
-          disabled={isSaving}
+          disabled={isSaving || isUploadingImage}
           className="bg-teal-700 text-white rounded px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
           {isSaving ? 'Salvando...' : submitLabel}

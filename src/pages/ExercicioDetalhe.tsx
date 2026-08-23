@@ -7,6 +7,8 @@ const nivelLabel = {
   avancado: 'Avançado',
 }
 
+// Pequeno componente auxiliar: mostra uma seção só se ela tiver conteúdo.
+// Reaproveitado várias vezes abaixo, para não repetir esse "if" toda hora.
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mt-6">
@@ -18,6 +20,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
+// Mostra uma lista de textos (cues, erros comuns, etc.) como bullet points
 function ListSection({ title, items }: { title: string; items: string[] | null }) {
   if (!items || items.length === 0) return null
   return (
@@ -31,12 +34,14 @@ function ListSection({ title, items }: { title: string; items: string[] | null }
   )
 }
 
+// Tenta extrair o ID de vídeo do YouTube de uma URL comum, para montar o embed
 function getYoutubeEmbedUrl(url: string): string | null {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]+)/)
   return match ? `https://www.youtube.com/embed/${match[1]}` : null
 }
 
 export function ExercicioDetalhe() {
+  // useParams lê o pedaço dinâmico da URL, ex: /exercicio/bridge -> slug = "bridge"
   const { slug } = useParams<{ slug: string }>()
   const { data: exercise, isLoading, error } = useExercise(slug)
 
@@ -75,6 +80,7 @@ export function ExercicioDetalhe() {
 
       <h1 className="text-3xl font-bold text-gray-900 mt-2">{exercise.nome}</h1>
 
+      {/* Badges de nível, equipamento e objetivo */}
       <div className="flex flex-wrap gap-2 mt-3">
         <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
           {nivelLabel[exercise.nivel]}
@@ -96,7 +102,9 @@ export function ExercicioDetalhe() {
         )}
       </div>
 
-      {embedUrl && (
+      {/* Mostra o vídeo, se existir. Só mostra a imagem se NÃO houver vídeo
+          (evita repetir a mesma informação visual duas vezes seguidas) */}
+      {embedUrl ? (
         <div className="mt-6 aspect-video">
           <iframe
             src={embedUrl}
@@ -105,14 +113,14 @@ export function ExercicioDetalhe() {
             allowFullScreen
           />
         </div>
-      )}
-
-      {exercise.imagem_url && (
-        <img
-          src={exercise.imagem_url}
-          alt={exercise.nome}
-          className="w-full rounded-lg mt-6"
-        />
+      ) : (
+        exercise.imagem_url && (
+          <img
+            src={exercise.imagem_url}
+            alt={exercise.nome}
+            className="w-full rounded-lg mt-6"
+          />
+        )
       )}
 
       {exercise.descricao_curta && (
