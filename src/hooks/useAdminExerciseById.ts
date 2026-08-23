@@ -18,14 +18,25 @@ export type ExerciseFormData = {
   indicacoes: string
   precaucoes: string
   contraindicacoes: string
+  muscle_ids: string[]
+  joint_ids: string[]
   status: 'rascunho' | 'publicado'
 }
 
 async function fetchExerciseById(id: string): Promise<ExerciseFormData | null> {
+  // A sintaxe "exercise_muscles(muscle_id)" busca, junto do exercício,
+  // a lista de relações já existentes na tabela de associação —
+  // equivalente a fazer uma segunda consulta, só que em uma única chamada
   const { data, error } = await supabase
     .from('exercises')
     .select(
-      'id, nome, descricao_curta, nivel, equipamento_id, objetivo_principal_id, regiao_corporal_id, execucao, video_url, imagem_url, cues, erros_comuns, indicacoes, precaucoes, contraindicacoes, status'
+      `
+      id, nome, descricao_curta, nivel, equipamento_id, objetivo_principal_id,
+      regiao_corporal_id, execucao, video_url, imagem_url,
+      cues, erros_comuns, indicacoes, precaucoes, contraindicacoes, status,
+      exercise_muscles ( muscle_id ),
+      exercise_joints ( joint_id )
+    `
     )
     .eq('id', id)
     .single()
@@ -44,13 +55,15 @@ async function fetchExerciseById(id: string): Promise<ExerciseFormData | null> {
     execucao: data.execucao ?? '',
     video_url: data.video_url ?? '',
     imagem_url: data.imagem_url ?? '',
-    // Convertendo as listas vindas do banco de volta em texto multi-linha,
-    // para exibir dentro das <textarea> do formulário de edição
     cues: arrayParaLinhas(data.cues),
     erros_comuns: arrayParaLinhas(data.erros_comuns),
     indicacoes: arrayParaLinhas(data.indicacoes),
     precaucoes: arrayParaLinhas(data.precaucoes),
     contraindicacoes: arrayParaLinhas(data.contraindicacoes),
+    // Convertendo [{muscle_id: "abc"}, {muscle_id: "def"}] em ["abc", "def"]
+    // — formato mais simples de trabalhar no formulário
+    muscle_ids: (data.exercise_muscles ?? []).map((rel: { muscle_id: string }) => rel.muscle_id),
+    joint_ids: (data.exercise_joints ?? []).map((rel: { joint_id: string }) => rel.joint_id),
   }
 }
 

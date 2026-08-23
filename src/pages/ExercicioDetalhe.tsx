@@ -146,6 +146,15 @@ export function ExercicioDetalhe() {
       <ListSection title="Indicações" items={exercise.indicacoes} />
       <ListSection title="Precauções" items={exercise.precaucoes} />
       <ListSection title="Contraindicações" items={exercise.contraindicacoes} />
+
+      <ListSection
+        title="Músculos envolvidos"
+        items={exercise.exercise_muscles?.map((rel) => rel.muscles.nome) ?? []}
+      />
+      <ListSection
+        title="Articulações envolvidas"
+        items={exercise.exercise_joints?.map((rel) => rel.joints.nome) ?? []}
+      />
     </div>
   )
 }

@@ -6,8 +6,6 @@ export type TaxonomyItem = {
   nome: string
 }
 
-// Função genérica: busca todos os registros de uma tabela de categoria,
-// ordenados por nome. Reaproveitamos para equipment, objectives, etc.
 async function fetchTaxonomy(table: string): Promise<TaxonomyItem[]> {
   const { data, error } = await supabase.from(table).select('id, nome').order('nome')
 
@@ -33,5 +31,19 @@ export function useBodyRegions() {
   return useQuery({
     queryKey: ['body_regions'],
     queryFn: () => fetchTaxonomy('body_regions'),
+  })
+}
+
+export function useMuscles() {
+  return useQuery({
+    queryKey: ['muscles'],
+    queryFn: () => fetchTaxonomy('muscles'),
+  })
+}
+
+export function useJoints() {
+  return useQuery({
+    queryKey: ['joints'],
+    queryFn: () => fetchTaxonomy('joints'),
   })
 }

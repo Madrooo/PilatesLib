@@ -1,6 +1,13 @@
 import { useState, type FormEvent } from 'react'
-import { useEquipment, useObjectives, useBodyRegions } from '../hooks/useTaxonomy'
+import {
+  useEquipment,
+  useObjectives,
+  useBodyRegions,
+  useMuscles,
+  useJoints,
+} from '../hooks/useTaxonomy'
 import { uploadExerciseImage } from '../lib/uploadExerciseImage'
+import { CheckboxList } from './CheckboxList'
 
 export type ExerciseFormValues = {
   nome: string
@@ -12,14 +19,14 @@ export type ExerciseFormValues = {
   execucao: string
   video_url: string
   imagem_url: string
-  // Os cinco campos abaixo guardam o texto "cru" digitado no formulário
-  // (um item por linha) — a conversão para lista acontece só na hora
-  // de salvar no banco (ver useCreateExercise / useUpdateExercise)
   cues: string
   erros_comuns: string
   indicacoes: string
   precaucoes: string
   contraindicacoes: string
+  // Seleção múltipla: guardamos os IDs dos músculos/articulações marcados
+  muscle_ids: string[]
+  joint_ids: string[]
 }
 
 const CAMPOS_VAZIOS: ExerciseFormValues = {
@@ -37,6 +44,8 @@ const CAMPOS_VAZIOS: ExerciseFormValues = {
   indicacoes: '',
   precaucoes: '',
   contraindicacoes: '',
+  muscle_ids: [],
+  joint_ids: [],
 }
 
 type Props = {
@@ -55,6 +64,8 @@ export function ExerciseForm({
   const { data: equipmentList } = useEquipment()
   const { data: objectivesList } = useObjectives()
   const { data: bodyRegionsList } = useBodyRegions()
+  const { data: musclesList } = useMuscles()
+  const { data: jointsList } = useJoints()
 
   const [form, setForm] = useState<ExerciseFormValues>(initialValues ?? CAMPOS_VAZIOS)
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -247,7 +258,7 @@ export function ExerciseForm({
         )}
       </div>
 
-      {/* ----- Campos clínicos adicionais ----- */}
+      {/* ----- Campos clínicos ----- */}
       <div className="pt-4 border-t border-gray-200">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
           Informações clínicas
@@ -263,7 +274,6 @@ export function ExerciseForm({
               value={form.cues}
               onChange={(e) => updateField('cues', e.target.value)}
               rows={3}
-              placeholder={'Ex: "Alongue a coluna"\n"Ative o core antes de mover"'}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             />
           </div>
@@ -317,6 +327,28 @@ export function ExerciseForm({
               onChange={(e) => updateField('contraindicacoes', e.target.value)}
               rows={2}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Músculos envolvidos
+            </label>
+            <CheckboxList
+              items={musclesList}
+              selectedIds={form.muscle_ids}
+              onChange={(ids) => updateField('muscle_ids', ids)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Articulações envolvidas
+            </label>
+            <CheckboxList
+              items={jointsList}
+              selectedIds={form.joint_ids}
+              onChange={(ids) => updateField('joint_ids', ids)}
             />
           </div>
         </div>

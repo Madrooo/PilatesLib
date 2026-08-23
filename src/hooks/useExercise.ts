@@ -20,6 +20,10 @@ export type ExerciseDetail = {
   equipment: { nome: string } | null
   objectives: { nome: string } | null
   body_regions: { nome: string } | null
+  // Cada relação vem como um objeto aninhado (muscles: {nome}) — tratamos
+  // isso na função de busca abaixo, convertendo para uma lista simples de nomes
+  exercise_muscles: { muscles: { nome: string } }[]
+  exercise_joints: { joints: { nome: string } }[]
 }
 
 async function fetchExerciseBySlug(slug: string): Promise<ExerciseDetail | null> {
@@ -32,13 +36,13 @@ async function fetchExerciseBySlug(slug: string): Promise<ExerciseDetail | null>
       nivel, video_url, imagem_url,
       equipment:equipamento_id ( nome ),
       objectives:objetivo_principal_id ( nome ),
-      body_regions:regiao_corporal_id ( nome )
+      body_regions:regiao_corporal_id ( nome ),
+      exercise_muscles ( muscles ( nome ) ),
+      exercise_joints ( joints ( nome ) )
     `
     )
     .eq('slug', slug)
     .eq('status', 'publicado')
-    // Mesmo filtro explícito aqui: garante que ninguém acesse um
-    // exercício excluído digitando a URL direto, mesmo estando logado como admin
     .is('excluido_em', null)
     .single()
 
