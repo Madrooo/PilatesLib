@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ExerciseForm, type ExerciseFormValues } from '../components/ExerciseForm'
 import { useAdminExerciseById } from '../hooks/useAdminExerciseById'
@@ -8,10 +9,17 @@ export function AdminEditar() {
   const navigate = useNavigate()
   const { data: exercise, isLoading, error } = useAdminExerciseById(id)
   const updateExercise = useUpdateExercise()
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   async function handleSubmit(values: ExerciseFormValues, status: 'rascunho' | 'publicado') {
-    await updateExercise.mutateAsync({ id, ...values, status })
-    navigate('/admin')
+    setSaveError(null)
+    try {
+      await updateExercise.mutateAsync({ id, ...values, status })
+      navigate('/admin')
+    } catch (err) {
+      // Antes, um erro aqui "sumia" silenciosamente. Agora ele fica visível.
+      setSaveError((err as Error).message)
+    }
   }
 
   if (isLoading) {
@@ -44,6 +52,13 @@ export function AdminEditar() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         Editar: {exercise.nome}
       </h1>
+
+      {saveError && (
+        <p className="mb-4 text-sm px-3 py-2 rounded bg-red-50 text-red-700">
+          Erro ao salvar: {saveError}
+        </p>
+      )}
+
       <ExerciseForm
         initialValues={exercise}
         onSubmit={handleSubmit}

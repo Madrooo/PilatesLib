@@ -24,9 +24,6 @@ export type ExerciseFormData = {
 }
 
 async function fetchExerciseById(id: string): Promise<ExerciseFormData | null> {
-  // A sintaxe "exercise_muscles(muscle_id)" busca, junto do exercício,
-  // a lista de relações já existentes na tabela de associação —
-  // equivalente a fazer uma segunda consulta, só que em uma única chamada
   const { data, error } = await supabase
     .from('exercises')
     .select(
@@ -46,24 +43,29 @@ async function fetchExerciseById(id: string): Promise<ExerciseFormData | null> {
     throw new Error(error.message)
   }
 
+  // IMPORTANTE: extraímos "exercise_muscles" e "exercise_joints" aqui para
+  // FORA do objeto (usando essa sintaxe de desestruturação), justamente
+  // para que essas chaves brutas não "vazem" para o restante do formulário
+  // — sem isso, elas acabavam sendo enviadas de volta ao Supabase na hora
+  // de salvar, e "exercise_joints" não é uma coluna de verdade na tabela.
+  const { exercise_muscles, exercise_joints, ...dadosDiretos } = data
+
   return {
-    ...data,
-    descricao_curta: data.descricao_curta ?? '',
-    equipamento_id: data.equipamento_id ?? '',
-    objetivo_principal_id: data.objetivo_principal_id ?? '',
-    regiao_corporal_id: data.regiao_corporal_id ?? '',
-    execucao: data.execucao ?? '',
-    video_url: data.video_url ?? '',
-    imagem_url: data.imagem_url ?? '',
-    cues: arrayParaLinhas(data.cues),
-    erros_comuns: arrayParaLinhas(data.erros_comuns),
-    indicacoes: arrayParaLinhas(data.indicacoes),
-    precaucoes: arrayParaLinhas(data.precaucoes),
-    contraindicacoes: arrayParaLinhas(data.contraindicacoes),
-    // Convertendo [{muscle_id: "abc"}, {muscle_id: "def"}] em ["abc", "def"]
-    // — formato mais simples de trabalhar no formulário
-    muscle_ids: (data.exercise_muscles ?? []).map((rel: { muscle_id: string }) => rel.muscle_id),
-    joint_ids: (data.exercise_joints ?? []).map((rel: { joint_id: string }) => rel.joint_id),
+    ...dadosDiretos,
+    descricao_curta: dadosDiretos.descricao_curta ?? '',
+    equipamento_id: dadosDiretos.equipamento_id ?? '',
+    objetivo_principal_id: dadosDiretos.objetivo_principal_id ?? '',
+    regiao_corporal_id: dadosDiretos.regiao_corporal_id ?? '',
+    execucao: dadosDiretos.execucao ?? '',
+    video_url: dadosDiretos.video_url ?? '',
+    imagem_url: dadosDiretos.imagem_url ?? '',
+    cues: arrayParaLinhas(dadosDiretos.cues),
+    erros_comuns: arrayParaLinhas(dadosDiretos.erros_comuns),
+    indicacoes: arrayParaLinhas(dadosDiretos.indicacoes),
+    precaucoes: arrayParaLinhas(dadosDiretos.precaucoes),
+    contraindicacoes: arrayParaLinhas(dadosDiretos.contraindicacoes),
+    muscle_ids: (exercise_muscles ?? []).map((rel: { muscle_id: string }) => rel.muscle_id),
+    joint_ids: (exercise_joints ?? []).map((rel: { joint_id: string }) => rel.joint_id),
   }
 }
 

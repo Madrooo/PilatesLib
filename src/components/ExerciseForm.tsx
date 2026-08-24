@@ -107,6 +107,8 @@ export function ExerciseForm({
       return
     }
     setFeedback(null)
+    // LOG TEMPORÁRIO para depuração — remover depois de resolver o problema
+    console.log('Enviando ao salvar — muscle_ids:', form.muscle_ids, 'joint_ids:', form.joint_ids)
     await onSubmit(form, status)
   }
 
