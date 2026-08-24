@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ExerciseForm, type ExerciseFormValues } from '../components/ExerciseForm'
 import { useAdminExerciseById } from '../hooks/useAdminExerciseById'
 import { useUpdateExercise } from '../hooks/useUpdateExercise'
+import { ProgressionsManager } from '../components/ProgressionsManager'
 
 export function AdminEditar() {
   const { id } = useParams<{ id: string }>()
@@ -65,6 +66,11 @@ export function AdminEditar() {
         isSaving={updateExercise.isPending}
         submitLabel="Salvar alterações"
       />
+
+      {/* Progressões/regressões só fazem sentido para um exercício que já
+          existe (precisa do ID para criar as relações) — por isso ficam
+          aqui na tela de edição, e não no formulário de criação */}
+      {exercise.id && <ProgressionsManager exerciseId={exercise.id} />}
     </div>
   )
 }

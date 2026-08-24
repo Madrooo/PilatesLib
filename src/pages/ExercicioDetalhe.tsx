@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useExercise } from '../hooks/useExercise'
+import { useExerciseRelations } from '../hooks/useExerciseRelations'
 
 const nivelLabel = {
   iniciante: 'Iniciante',
@@ -44,6 +45,9 @@ export function ExercicioDetalhe() {
   // useParams lê o pedaço dinâmico da URL, ex: /exercicio/bridge -> slug = "bridge"
   const { slug } = useParams<{ slug: string }>()
   const { data: exercise, isLoading, error } = useExercise(slug)
+  // Só busca as relações depois que já sabemos o ID do exercício —
+  // o hook cuida sozinho de não disparar antes disso (ver "enabled")
+  const { data: relations } = useExerciseRelations(exercise?.id, true)
 
   if (isLoading) {
     return <div className="p-8 text-center text-gray-500">Carregando...</div>
@@ -155,6 +159,39 @@ export function ExercicioDetalhe() {
         title="Articulações envolvidas"
         items={exercise.exercise_joints?.map((rel) => rel.joints.nome) ?? []}
       />
+
+      {/* Progressões e regressões: cards clicáveis levando a outros exercícios */}
+      {relations && relations.progressoes.length > 0 && (
+        <Section title="Progressões (mais avançado)">
+          <div className="flex flex-wrap gap-2">
+            {relations.progressoes.map((rel) => (
+              <Link
+                key={rel.relationId}
+                to={`/exercicio/${rel.exercise.slug}`}
+                className="px-3 py-2 rounded border border-gray-200 text-sm text-teal-700 hover:bg-gray-50"
+              >
+                {rel.exercise.nome}
+              </Link>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {relations && relations.regressoes.length > 0 && (
+        <Section title="Regressões (mais simples)">
+          <div className="flex flex-wrap gap-2">
+            {relations.regressoes.map((rel) => (
+              <Link
+                key={rel.relationId}
+                to={`/exercicio/${rel.exercise.slug}`}
+                className="px-3 py-2 rounded border border-gray-200 text-sm text-teal-700 hover:bg-gray-50"
+              >
+                {rel.exercise.nome}
+              </Link>
+            ))}
+          </div>
+        </Section>
+      )}
     </div>
   )
 }
