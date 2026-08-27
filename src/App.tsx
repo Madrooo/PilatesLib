@@ -5,6 +5,7 @@ import { Login } from './pages/Login'
 import { Admin } from './pages/Admin'
 import { AdminNovo } from './pages/AdminNovo'
 import { AdminEditar } from './pages/AdminEditar'
+import { AdminCategorias } from './pages/AdminCategorias'
 import { ExercicioDetalhe } from './pages/ExercicioDetalhe'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 
@@ -37,6 +38,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminEditar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/categorias"
+          element={
+            <ProtectedRoute>
+              <AdminCategorias />
             </ProtectedRoute>
           }
         />

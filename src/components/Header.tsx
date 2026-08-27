@@ -16,9 +16,14 @@ export function Header() {
         </Link>
 
         {user?.papel === 'admin' && (
-          <Link to="/admin" className="text-gray-600 hover:text-gray-900">
-            Admin
-          </Link>
+          <>
+            <Link to="/admin" className="text-gray-600 hover:text-gray-900">
+              Admin
+            </Link>
+            <Link to="/admin/categorias" className="text-gray-600 hover:text-gray-900">
+              Categorias
+            </Link>
+          </>
         )}
 
         {user ? (
