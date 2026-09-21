@@ -12,11 +12,14 @@ Diferente de uma lista simples de exercícios com vídeos, cada exercício possu
 
 | Biblioteca | Detalhe do exercício |
 |---|---|
-| _(screenshot aqui)_ | _(screenshot aqui)_ |
+| _<img width="1912" height="904" alt="image" src="https://github.com/user-attachments/assets/e577e007-356c-4b08-af46-09fdd7ef4a0b" />
+_ | _<img width="1878" height="898" alt="image" src="https://github.com/user-attachments/assets/5d9713b4-8f2b-46af-8ccb-5ac3038aa618" />
+_ |
 
 | Área administrativa | Mobile |
 |---|---|
-| _(screenshot aqui)_ | _(screenshot aqui)_ |
+| _<img width="1917" height="625" alt="image" src="https://github.com/user-attachments/assets/a7fa9e19-aa5a-4503-89a4-33d0f0701184" />
+_ | _(screenshot aqui)_ |
 
 ## Sobre o projeto
 
