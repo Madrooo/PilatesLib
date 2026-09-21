@@ -12,15 +12,16 @@ Diferente de uma lista simples de exercícios com vídeos, cada exercício possu
 
 | Biblioteca | Detalhe do exercício |
 |---|---|
-| <img width="1912" height="904" alt="image" src="https://github.com/user-attachments/assets/e577e007-356c-4b08-af46-09fdd7ef4a0b" /> <img width="631" height="327" alt="image" src="https://github.com/user-attachments/assets/12099884-c731-4075-a874-c7ab265acb89" />
-
- | <img width="1878" height="898" alt="image" src="https://github.com/user-attachments/assets/5d9713b4-8f2b-46af-8ccb-5ac3038aa618" />
+| <img width="901" height="822" alt="image" src="https://github.com/user-attachments/assets/bfd97fc1-91f3-4e47-b697-039c6cc1810e" />
+ | <img width="902" height="825" alt="image" src="https://github.com/user-attachments/assets/c8a8405e-6220-4388-ac72-940c4326bd65" />
  |
 
 | Área administrativa | Mobile |
 |---|---|
-| <img width="1917" height="625" alt="image" src="https://github.com/user-attachments/assets/a7fa9e19-aa5a-4503-89a4-33d0f0701184" />
- | _(screenshot aqui)_ |
+| <img width="901" height="824" alt="image" src="https://github.com/user-attachments/assets/8d46f6a4-0c3f-4303-82af-bd3f33e6519f" /> <img width="921" height="832" alt="image" src="https://github.com/user-attachments/assets/fffab063-83d3-465f-b0b4-72b6bfa9a67e" />
+
+ | <img width="481" height="832" alt="image" src="https://github.com/user-attachments/assets/c260e659-e78f-45ba-a560-70f15cdd8548" />
+ |
 
 ## Sobre o projeto
 
@@ -89,4 +90,3 @@ O projeto usa PostgreSQL (via Supabase) com:
 - [ ] Migração do banco para a região São Paulo (redução de latência)
 
 Funcionalidades futuras mais distantes: montagem de sequências de exercícios (apoio à decisão, não prescrição automática), módulo de avaliação e evolução do paciente, PWA/app.
-
