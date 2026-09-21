@@ -12,8 +12,7 @@ Diferente de uma lista simples de exercícios com vídeos, cada exercício possu
 
 | Biblioteca | Detalhe do exercício |
 |---|---|
-| <img width="1912" height="904" alt="image" src="https://github.com/user-attachments/assets/e577e007-356c-4b08-af46-09fdd7ef4a0b" /> 
-<img width="631" height="327" alt="image" src="https://github.com/user-attachments/assets/ed7076ea-dc98-478e-b5bf-889f5edfd3c6" />
+| <img width="1912" height="904" alt="image" src="https://github.com/user-attachments/assets/e577e007-356c-4b08-af46-09fdd7ef4a0b" /> <img width="631" height="327" alt="image" src="https://github.com/user-attachments/assets/12099884-c731-4075-a874-c7ab265acb89" />
 
  | <img width="1878" height="898" alt="image" src="https://github.com/user-attachments/assets/5d9713b4-8f2b-46af-8ccb-5ac3038aa618" />
  |
