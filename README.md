@@ -86,4 +86,4 @@ Funcionalidades futuras mais distantes: montagem de sequências de exercícios (
 
 ## Aviso legal
 
-Este projeto é uma biblioteca de estudo e apoio ao raciocínio clínico. Não realiza diagnóstico, não prescreve exercícios automaticamente e não substitui a avaliação individual de um profissional de fisioterapia qualificado.
+Este projeto é uma biblioteca de estudo e apoio ao raciocínio clínico. Não realiza diagnóstico, não prescreve exercícios automaticamente e não substitui a avaliação individual de um profissional de fisioterapia qualificado.aaaa
