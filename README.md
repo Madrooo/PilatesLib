@@ -1,4 +1,4 @@
-# PilatesLib
+#PilatesLib
 
 Biblioteca digital de exercícios de Pilates, estruturada com lógica clínica para apoiar o estudo e o raciocínio clínico de estudantes e profissionais de Fisioterapia/Pilates — construída do zero, da documentação ao deploy.
 
