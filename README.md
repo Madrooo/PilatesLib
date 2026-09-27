@@ -80,7 +80,6 @@ O projeto usa PostgreSQL (via Supabase) com:
 - [ ] Sistema de favoritos
 - [ ] Acessibilidade (contraste, textos alternativos, navegação por teclado)
 - [ ] Estados de carregamento com mais polimento visual
-- [ ] Migração do banco para a região São Paulo (redução de latência)
 
 Funcionalidades futuras mais distantes: montagem de sequências de exercícios (apoio à decisão, não prescrição automática), módulo de avaliação e evolução do paciente, PWA/app.
 
