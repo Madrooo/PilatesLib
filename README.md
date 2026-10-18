@@ -18,7 +18,7 @@ Diferente de uma lista simples de exercícios com vídeos, cada exercício possu
 
 ## Sobre o projeto
 
-Este projeto nasceu de uma necessidade real: como estudante de Fisioterapia e de Ciência da Computação, eu queria uma ferramenta de estudo organizada com lógica clínica — não apenas uma lista de vídeos. Antes de escrever qualquer código, defini uma documentação completa (visão do produto, arquitetura, modelo de dados, casos de uso, requisitos funcionais e não funcionais) para guiar o desenvolvimento com decisões técnicas justificadas, não improvisadas.
+Este projeto nasceu de uma necessidade real: como minha namorada estudante de Fisioterapia e eu de Ciência da Computação, eu queria uma ferramenta de estudo organizada com lógica clínica — não apenas uma lista de vídeos. Antes de escrever qualquer código, defini uma documentação completa (visão do produto, arquitetura, modelo de dados, casos de uso, requisitos funcionais e não funcionais) para guiar o desenvolvimento com decisões técnicas justificadas, não improvisadas.
 
 ## Funcionalidades
 
